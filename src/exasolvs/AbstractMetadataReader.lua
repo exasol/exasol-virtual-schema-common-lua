@@ -1,11 +1,11 @@
-local log = require("remotelog")
-local text = require("text")
-local ExaError = require("ExaError")
-
 --- This class reads schema, table and column metadata from the source.
 -- @classmod LocalMetadataReader
 local AbstractMetadataReader = {}
 AbstractMetadataReader.__index = AbstractMetadataReader
+
+local log = require("remotelog")
+local text = require("text")
+local ExaError = require("ExaError")
 
 local DEFAULT_SRID <const> = 0
 

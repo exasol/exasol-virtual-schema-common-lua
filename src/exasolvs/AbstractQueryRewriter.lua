@@ -92,8 +92,8 @@ function AbstractQueryRewriter:_expand_select_list(query)
 end
 
 --- Rewrite the original query.
--- @param original_query structure containing the original push-down query
--- @param source_schema_id source schema the Exasol VS is put on top of
+-- @param _ structure containing the original push-down query
+-- @param _ source schema the Exasol VS is put on top of
 -- @param _ cache taken from the adapter notes
 -- @param _ list of tables that appear in the query
 -- @return string containing the rewritten query

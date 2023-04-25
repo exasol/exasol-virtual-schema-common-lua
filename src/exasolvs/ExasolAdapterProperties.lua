@@ -1,13 +1,12 @@
 --- This class abstracts access to the user-defined properties of the Virtual Schema.
 -- @classmod ExasolAdapterProperties
+local ExasolAdapterProperties = {}
+ExasolAdapterProperties.__index = ExasolAdapterProperties
+setmetatable(ExasolAdapterProperties, AdapterProperties)
 
 local text = require("text")
 local ExaError = require("ExaError")
 local AdapterProperties = require("exasolvs.AdapterProperties")
-
-local ExasolAdapterProperties = {}
-ExasolAdapterProperties.__index = ExasolAdapterProperties
-setmetatable(ExasolAdapterProperties, AdapterProperties)
 
 --- Create a new `ExasolAdapterProperties` instance
 -- @param raw_properties unparsed user-defined properties

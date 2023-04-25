@@ -1,9 +1,9 @@
-local AbstractMetadataReader = require("exasolvs.AbstractMetadataReader")
 
 --- This class reads schema, table and column metadata from a schema in the local Exasol database.
 -- @classmod LocalMetadataReader
 local LocalMetadataReader = {}
 LocalMetadataReader.__index = LocalMetadataReader
+local AbstractMetadataReader = require("exasolvs.AbstractMetadataReader")
 setmetatable(LocalMetadataReader, {__index = AbstractMetadataReader})
 
 --- Create a new `LocalMetadataReader`.

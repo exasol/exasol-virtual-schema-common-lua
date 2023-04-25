@@ -24,3 +24,14 @@ backtick_references = false
 wrap = true
 no_space_before_args = true
 all = true -- show also local functions
+custom_tags = {
+    {
+        "cover",
+        title = "Covers Requirements",
+        hidden = false,
+        format = function (item)
+            local covering_artifact_type, covered = item:match(" *%[ *(%w+) *-> *([%-%w~]+)")
+            return "<li><code>" .. covered .. "</code> (" .. covering_artifact_type .. ")" .. "</li>"
+        end
+    }
+}
