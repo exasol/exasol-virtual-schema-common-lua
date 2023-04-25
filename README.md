@@ -34,4 +34,4 @@ check the respective repositories.
 
 ## Information for Developers
 
-* [Changelog](docs/changes/changelog.md)
+* [Changelog](doc/changes/changelog.md)
