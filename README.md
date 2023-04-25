@@ -35,3 +35,12 @@ check the respective repositories.
 ## Information for Developers
 
 * [Changelog](doc/changes/changelog.md)
+<!-- TODO: Add API documentation link after first merge to main, so that the link checker does not complain. -->
+
+### Structure
+
+The library consists of a couple of base classes that Virtual Schemas need that use the Exasol database as a _data source_.
+
+![Library Structure of EVSCL](doc/images/generated/cl_exasol_virtual_schema.svg)
+
+Note that you only find implementations for _local_ reading of metadata and query rewriting here. The reason for this is that remote access is only relevant for the [Exasol Virtual Schema for Lua](https://github.com/exasol/exasol-virtual-schema-lua) and therefore not a common part.

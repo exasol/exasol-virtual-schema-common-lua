@@ -1,0 +1,21 @@
+@startuml
+!pragma layout smetana
+!include ../clean.skin
+
+title: Exasol Virtual Schema Common Lua Structure
+
+package exasolvs {
+    class ExasolAdapterProperties
+    interface QueryRewriter <<interface>>
+    class AbstractMetadataReader
+    class LocalMetadataReader
+    interface MetadataReader <<interface>>
+    class AbstractQueryRewriter
+    class LocalQueryRewriter
+
+    AbstractMetadataReader -u- MetadataReader
+    LocalMetadataReader -u-|> AbstractMetadataReader
+    QueryRewriter -d- AbstractQueryRewriter
+    LocalQueryRewriter -u-|> AbstractQueryRewriter
+}
+@enduml

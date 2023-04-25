@@ -4,6 +4,8 @@
 project = "Exasol Virtual Schema Common Lua"
 description = [[# Common base library for Exasol Row Level Security Lua (RLSL) and Exasol Virtual Schema Lua (EVSL).
 
+![Library Structure of EVSCL](https://github.com/exasol/exasol-virtual-schema-common-luadoc/images/generated/cl_exasol_virtual_schema.svg)
+
 Please visit the [project homepage on GitHub](https://github.com/exasol/exasol-virtual-schema-common-lua) for detailed information.
 ]]
 title = "Reference"
