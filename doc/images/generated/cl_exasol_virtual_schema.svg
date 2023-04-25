@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="337px" preserveAspectRatio="none" style="width:525px;height:337px;" version="1.1" viewBox="0 0 525 337" width="525px" zoomAndPan="magnify"><defs/><g><text fill="#000000" font-family="Calibri" font-size="18" lengthAdjust="spacingAndGlyphs" textLength="407" x="65" y="18.708">Exasol Virtual Schema Common Lua Structure</text><!--MD5=[1b1104b3dc1ba9404db1e76638f01c35]
+cluster exasolvs--><polygon fill="#FFFFFF" points="22,48.9531,101,48.9531,108,75.25,503,75.25,503,325.9531,22,325.9531,22,48.9531" style="stroke: #000000; stroke-width: 1.5;"/><line style="stroke: #000000; stroke-width: 1.5;" x1="22" x2="108" y1="75.25" y2="75.25"/><text fill="#000000" font-family="Calibri" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="69" x="28" y="65.9482">exasolvs</text><!--MD5=[d22e22f66629191319802813e94a9a43]
+class ExasolAdapterProperties--><rect fill="#FEFECE" height="27.9688" id="ExasolAdapterProperties" style="stroke: #A80036; stroke-width: 1.5;" width="165" x="171.5" y="96.9531"/><text fill="#000000" font-family="Calibri" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="155" x="176.5" y="115.0918">ExasolAdapterProperties</text><!--MD5=[0e97f1111f72757a39d22e10604acc1e]
+class QueryRewriter--><rect fill="#FEFECE" height="45.9375" id="QueryRewriter" style="stroke: #A80036; stroke-width: 1.5;" width="98" x="38" y="87.9531"/><text fill="#000000" font-family="Calibri" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="70" x="52" y="106.0918">«interface»</text><text fill="#000000" font-family="Calibri" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="88" x="43" y="124.0605">QueryRewriter</text><!--MD5=[cf9dce4286f4157ddb902d9f68a79d2b]
+class AbstractMetadataReader--><rect fill="#FEFECE" height="27.9688" id="AbstractMetadataReader" style="stroke: #A80036; stroke-width: 1.5;" width="168" x="319" y="193.9531"/><text fill="#000000" font-family="Calibri" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="158" x="324" y="212.0918">AbstractMetadataReader</text><!--MD5=[4c2e5dbf98b39ffc95bda5dc35dbd233]
+class LocalMetadataReader--><rect fill="#FEFECE" height="27.9688" id="LocalMetadataReader" style="stroke: #A80036; stroke-width: 1.5;" width="147" x="329.5" y="281.9531"/><text fill="#000000" font-family="Calibri" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="137" x="334.5" y="300.0918">LocalMetadataReader</text><!--MD5=[f706bb4dd10119cd9a37b67d65706722]
+class MetadataReader--><rect fill="#FEFECE" height="45.9375" id="MetadataReader" style="stroke: #A80036; stroke-width: 1.5;" width="115" x="371.5" y="87.9531"/><text fill="#000000" font-family="Calibri" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="70" x="394" y="106.0918">«interface»</text><text fill="#000000" font-family="Calibri" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="105" x="376.5" y="124.0605">MetadataReader</text><!--MD5=[ea513d11d581af654248788fd3d74b62]
+class AbstractQueryRewriter--><rect fill="#FEFECE" height="27.9688" id="AbstractQueryRewriter" style="stroke: #A80036; stroke-width: 1.5;" width="150" x="38" y="193.9531"/><text fill="#000000" font-family="Calibri" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="140" x="43" y="212.0918">AbstractQueryRewriter</text><!--MD5=[05ad86e9af707622b3466ba7f42d06d8]
+class LocalQueryRewriter--><rect fill="#FEFECE" height="27.9688" id="LocalQueryRewriter" style="stroke: #A80036; stroke-width: 1.5;" width="129" x="48.5" y="281.9531"/><text fill="#000000" font-family="Calibri" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="119" x="53.5" y="300.0918">LocalQueryRewriter</text><!--MD5=[2471a31a526d5aac76432ff72dc148ca]
+link MetadataReader to AbstractMetadataReader--><path d="M422.97,133.9831 C417.9,152.5131 410.82,178.3831 406.59,193.8231 " fill="none" id="MetadataReader-AbstractMetadataReader" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[ba2df0acd6f8c8ed8cbccf5238fda9cc]
+reverse link AbstractMetadataReader to LocalMetadataReader--><path d="M403,242.2431 C403,256.0431 403,271.2531 403,281.7731 " fill="none" id="AbstractMetadataReader&lt;-LocalMetadataReader" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="none" points="396,242.0131,403,222.0131,410,242.0131,396,242.0131" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[53296fdf6ae4f3eede454799831b57c2]
+link QueryRewriter to AbstractQueryRewriter--><path d="M93.03,133.9831 C98.1,152.5131 105.18,178.3831 109.41,193.8231 " fill="none" id="QueryRewriter-AbstractQueryRewriter" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[4fb1cd27a6d438478975558aed52f7e4]
+reverse link AbstractQueryRewriter to LocalQueryRewriter--><path d="M113,242.2431 C113,256.0431 113,271.2531 113,281.7731 " fill="none" id="AbstractQueryRewriter&lt;-LocalQueryRewriter" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="none" points="106,242.0131,113,222.0131,120,242.0131,106,242.0131" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[30e7a49dcdd09f799a748474e614df09]
+@startuml
+!pragma layout smetana
+hide empty methods
+hide empty attributes
+skinparam style strictuml
+skinparam classAttributeIconSize 0
+!pragma horizontalLineBetweenDifferentPackageAllowed
+
+skinparam defaultFontName Calibri
+
+skinparam padding 2
+
+title: Exasol Virtual Schema Common Lua Structure
+
+package exasolvs {
+    class ExasolAdapterProperties
+    interface QueryRewriter <<interface>>
+    class AbstractMetadataReader
+    class LocalMetadataReader
+    interface MetadataReader <<interface>>
+    class AbstractQueryRewriter
+    class LocalQueryRewriter
+
+    AbstractMetadataReader -u- MetadataReader
+    LocalMetadataReader -u-|> AbstractMetadataReader
+    QueryRewriter -d- AbstractQueryRewriter
+    LocalQueryRewriter -u-|> AbstractQueryRewriter
+}
+@enduml
+
+PlantUML version 1.2020.02(Sun Mar 01 11:22:07 CET 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 11.0.18+10-post-Ubuntu-0ubuntu5
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
