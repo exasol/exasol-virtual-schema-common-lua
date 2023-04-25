@@ -27,8 +27,8 @@ actual_diagram_count=$(find "$output_dir" -name "*.svg" | wc --lines)
 readonly actual_diagram_count
 
 if [[ "$expected_diagram_count" -ne "$actual_diagram_count" ]]; then
-    echo "ERROR: Expected $expected_diagram_count diagrams but $actual_diagram_count where generated"
+    echo "ERROR: Expected $expected_diagram_count diagrams but $actual_diagram_count were generated"
     exit 1
 fi
 
-echo "All $actual_diagram_count diagrams where built successfully in $output_dir."
+echo "All $actual_diagram_count diagrams were built successfully in $output_dir."
