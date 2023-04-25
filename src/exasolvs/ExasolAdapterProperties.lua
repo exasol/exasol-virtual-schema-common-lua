@@ -2,11 +2,11 @@
 -- @classmod ExasolAdapterProperties
 local ExasolAdapterProperties = {}
 ExasolAdapterProperties.__index = ExasolAdapterProperties
+local AdapterProperties = require("exasolvs.AdapterProperties")
 setmetatable(ExasolAdapterProperties, AdapterProperties)
 
 local text = require("text")
 local ExaError = require("ExaError")
-local AdapterProperties = require("exasolvs.AdapterProperties")
 
 --- Create a new `ExasolAdapterProperties` instance
 -- @param raw_properties unparsed user-defined properties
