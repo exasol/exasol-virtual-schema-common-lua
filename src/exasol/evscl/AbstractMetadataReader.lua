@@ -4,8 +4,8 @@ local AbstractMetadataReader = {}
 AbstractMetadataReader.__index = AbstractMetadataReader
 
 local log = require("remotelog")
-local text = require("text")
 local ExaError = require("ExaError")
+local text = require("exasol.vscl.text")
 
 local DEFAULT_SRID <const> = 0
 
@@ -120,7 +120,7 @@ function AbstractMetadataReader:_translate_column_metadata(table_id, column)
     elseif text.starts_with(column_type, "INTERVAL DAY") then
         return self:_translate_interval_day_to_second(column_id, column_type)
     else
-        ExaError:new("E-EVSL-MDR-4", "Column {{table}}.{{column}} has unsupported type {{type}}.",
+        ExaError:new("E-EVSCL-MDR-4", "Column {{table}}.{{column}} has unsupported type {{type}}.",
                 {table = table_id, column = column_id, type = column_type})
                 :add_ticket_mitigation()
                 :raise()
@@ -130,24 +130,14 @@ end
 function AbstractMetadataReader:_translate_columns_metadata(schema_id, table_id)
     local ok, result = self:_execute_column_metadata_query(schema_id, table_id)
     local translated_columns = {}
-    local tenant_protected, role_protected, group_protected
     if ok then
         for i = 1, #result do
             local column = result[i]
-            local column_id = column.COLUMN_NAME
-            if (column_id == "EXA_ROW_TENANT") then
-                tenant_protected = true
-            elseif (column_id == "EXA_ROW_ROLES") then
-                role_protected = true
-            elseif (column_id == "EXA_ROW_GROUP") then
-                group_protected = true
-            else
-                table.insert(translated_columns, self:_translate_column_metadata(table_id, column))
-            end
+            table.insert(translated_columns, self:_translate_column_metadata(table_id, column))
         end
-        return translated_columns, tenant_protected, role_protected, group_protected
+        return translated_columns
     else
-        ExaError.error("E-EVSL-MDR-3",
+        ExaError.error("E-EVSCL-MDR-3",
                 "Unable to read column metadata from source table {{schema}}.{{table}}. Caused by: {{cause}}",
                 {schema = schema_id, table = table_id, cause = result.error_message})
     end
@@ -157,10 +147,15 @@ end
 -- @param _ schema name
 -- @param _ table name
 -- @return result set consisting of columns with name and type
+-- @cover [impl -> dsn~reading-column-metadata-from-a-table~0]
 function AbstractMetadataReader:_execute_column_metadata_query(_, _)
     error("Called abstract function '_execute_colum_metadata_query'.")
 end
 
+--- Check if a table should be included in the the virtual schema.
+-- @param table_id name of the table to check
+-- @param include_tables_lookup lookup table for names of database tables to include
+-- @cover [impl -> dsn~include-tables~0]
 function AbstractMetadataReader:_is_included_table(table_id, include_tables_lookup)
     return include_tables_lookup[table_id]
 end
@@ -181,24 +176,18 @@ function AbstractMetadataReader:_create_lookup(include_tables)
     return lookup
 end
 
--- [impl -> dsn~filtering-tables~0]
 function AbstractMetadataReader:_translate_table_scan_results(schema_id, result, include_tables)
     local tables = {}
-    local table_protection = {}
     local include_tables_lookup = self:_create_lookup(include_tables)
     for i = 1, #result do
         local table_id = result[i].TABLE_NAME
         if self:_is_included_table(table_id, include_tables_lookup) then
-            local columns, tenant_protected, role_protected, group_protected =
-                    self:_translate_columns_metadata(schema_id, table_id)
+            local columns = self:_translate_columns_metadata(schema_id, table_id)
             table.insert(tables, {name = table_id, columns = columns})
-            local protection = (tenant_protected and "t" or "-") .. (role_protected and "r" or "-")
-                    .. (group_protected and "g" or "-")
-            log.debug("Found table '%s' (%d columns). Protection: %s", table_id, #columns, protection)
-            table.insert(table_protection, table_id .. ":" .. protection)
+            log.debug("Found table '%s' (%d columns).")
         end
     end
-    return tables, table_protection
+    return tables
 end
 
 function AbstractMetadataReader:_translate_table_metadata(schema_id, include_tables)
@@ -206,7 +195,7 @@ function AbstractMetadataReader:_translate_table_metadata(schema_id, include_tab
     if ok then
         return self:_translate_table_scan_results(schema_id, result, include_tables)
     else
-        ExaError.error("E-EVSL-MDR-2",
+        ExaError.error("E-EVSCL-MDR-2",
                 "Unable to read table metadata from source schema {{schema}}. Caused by: {{cause}}",
                 {schema = schema_id, cause = result.error_message})
     end
@@ -215,6 +204,7 @@ end
 --- Execute a query that produces the list of table in the given schema.
 -- @param _ schema name
 -- @return result set with table names
+-- @cover [impl -> dsn~reading-table-metadata-from-a-schema~0]
 function AbstractMetadataReader:_execute_table_metadata_query(_)
     error("Called abstract function '_execute_table_metadata_query'.")
 end
@@ -227,11 +217,10 @@ end
 -- @param schema_id schema to be scanned
 -- @param include_tables list of tables to be included in the scan (optional, defaults to all tables in the schema)
 -- @return schema metadata
--- @cover [impl -> dsn~reading-source-metadata~0]
 function AbstractMetadataReader:read(schema_id, include_tables)
     log.debug("Reading metadata of source schema '" .. schema_id .. "'")
-    local tables, table_protection = self:_translate_table_metadata(schema_id, include_tables)
-    return {tables = tables, adapterNotes = table.concat(table_protection, ",")}
+    local tables = self:_translate_table_metadata(schema_id, include_tables)
+    return {tables = tables}
 end
 
 return AbstractMetadataReader

@@ -18,7 +18,7 @@ It is the middle layer of the two Virtual Schemas.
         <tr>
             <th>1</th>
             <td colspan="2">
-                <a href="https://github.com/exasol/virtual-schema-commmon-lua">Virtual Schema Lua</a>
+                <a href="https://github.com/exasol/virtual-schema-commmon-lua">Virtual Schema Common Lua</a>
             </td>
         </tr>
   </tbody>
@@ -31,6 +31,7 @@ check the respective repositories.
 
 * [Exasol Virtual Schema (Lua)](https://github.com/exasol/exasol-virtual-schema-lua)
 * [Row-level Security (Lua)](https://github.com/exasol/row-level-security-lua)
+* [System Requirements](doc/system_requirements.md)
 
 ## Information for Developers
 
@@ -40,6 +41,8 @@ check the respective repositories.
 ### Structure
 
 The library consists of a couple of base classes that Virtual Schemas need that use the Exasol database as a _data source_.
+
+The library itself sits on top of [Virtual Schema Common Lua](https://github.com/exasol/virtual-schema-common-lua), the foundation of all Virtual Schemas written in Lua.
 
 ![Library Structure of EVSCL](doc/images/generated/cl_exasol_virtual_schema.svg)
 

@@ -22,7 +22,7 @@ Common parts that are the same for all Virtual Schemas are in virtual-schema-com
 }
 
 dependencies = {
-    "virtual-schema-common-lua = 3.0.0",
+    "virtual-schema-common-lua = 4.0.0",
 }
 
 build_dependencies = {
@@ -44,10 +44,10 @@ test = {
 build = {
     type = "builtin",
     modules = {
-        ["exasolvs.ExasolAdapterProperties"] = "src/exasolvs/ExasolAdapterProperties.lua",
-        ["exasolvs.AbstractMetadataReader"] = "src/exasolvs/AbstractMetadataReader.lua",
-        ["exasolvs.AbstractQueryRewriter"] = "src/exasolvs/AbstractQueryRewriter.lua",
-        ["exasolvs.LocalMetadataReader"] = "src/exasolvs/LocalMetadataReader.lua",
-        ["exasolvs.LocalQueryRewriter"] = "src/exasolvs/LocalMetadataReader.lua"
+        ["exasol.evscl.ExasolBaseAdapterProperties"] = "src/exasol/evscl/ExasolBaseAdapterProperties.lua",
+        ["exasol.evscl.AbstractMetadataReader"] = "src/exasol/evscl/AbstractMetadataReader.lua",
+        ["exasol.evscl.AbstractQueryRewriter"] = "src/exasol/evscl/AbstractQueryRewriter.lua",
+        ["exasol.evscl.LocalMetadataReader"] = "src/exasol/evscl/LocalMetadataReader.lua",
+        ["exasol.evscl.LocalQueryRewriter"] = "src/exasol/evscl/LocalQueryRewriter.lua"
     }
 }

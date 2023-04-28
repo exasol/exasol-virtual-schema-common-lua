@@ -1,4 +1,4 @@
 include = {
-    "src/exasolvs$",
-    "src/exasolvs%/.+$",
+    "src/exasol/evscl$",
+    "src/exasol/evscls%/.+$",
 }

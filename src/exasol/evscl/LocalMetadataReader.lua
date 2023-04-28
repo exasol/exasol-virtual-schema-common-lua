@@ -3,7 +3,7 @@
 -- @classmod LocalMetadataReader
 local LocalMetadataReader = {}
 LocalMetadataReader.__index = LocalMetadataReader
-local AbstractMetadataReader = require("exasolvs.AbstractMetadataReader")
+local AbstractMetadataReader = require("exasol.evscl.AbstractMetadataReader")
 setmetatable(LocalMetadataReader, {__index = AbstractMetadataReader})
 
 --- Create a new `LocalMetadataReader`.
