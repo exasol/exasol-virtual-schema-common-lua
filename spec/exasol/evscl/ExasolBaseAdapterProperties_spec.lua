@@ -1,5 +1,5 @@
 require("busted.runner")()
-local ExasolAdapterProperties = require("exasolvs.ExasolAdapterProperties")
+local ExasolAdapterProperties = require("exasol.evscl.ExasolBaseAdapterProperties")
 
 describe("adapter_properties", function()
     describe("validates property rule:", function()
@@ -11,15 +11,6 @@ describe("adapter_properties", function()
                 {
                     properties = {SCHEMA_NAME = ""},
                     expected = "Missing mandatory property 'SCHEMA_NAME'.",
-                },
-                {
-                    properties = {SCHEMA_NAME = "THE_SCHEMA", TABLE_FILTER = ""},
-                    expected = "Table filter property 'TABLE_FILTER' must not be empty."
-                },
-                {
-                    properties = {SCHEMA_NAME = "THE_SCHEMA", EXA_CONNECTION = "THE_CONNECTION",
-                                  CONNECTION_NAME = "THE_CONNECTION"},
-                    expected = "Properties 'CONNECTION_NAME' and 'EXA_CONNECTION' cannot be used in combination."
                 }
             }
             for _, test in ipairs(tests) do
@@ -30,10 +21,12 @@ describe("adapter_properties", function()
             end
     end)
 
+    -- [utest -> dsn~schema-name-property~0]
     it("gets the SCHEMA_NAME property", function()
         assert.is("a_schema", ExasolAdapterProperties:new({SCHEMA_NAME = "a_schema"}):get_schema_name())
     end)
 
+    -- [utest -> dsn~table-filter-property~0]
     describe("get the TABLE_FILTER property:", function()
         local tests = {
             {
@@ -64,19 +57,6 @@ describe("adapter_properties", function()
             end)
         end
     end)
-
-    it("gets the name of the connection object", function()
-        assert.are.same("the_connection",
-                ExasolAdapterProperties:new({CONNECTION_NAME = "the_connection"}):get_connection_name())
-    end)
-
-
-    it("alternatively gets the name of the connection object from the EXA_CONNECTION property (backward-compatibility)",
-            function()
-                assert.are.same("the_exa_connection",
-                        ExasolAdapterProperties:new({EXA_CONNECTION = "the_exa_connection"}):get_connection_name())
-            end
-    )
 
     it("can produce a string representation", function()
         local properties = ExasolAdapterProperties:new({a = 1, b = 2, c = 3})

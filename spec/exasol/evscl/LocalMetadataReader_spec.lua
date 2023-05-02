@@ -1,6 +1,6 @@
 require("busted.runner")()
 local mockagne = require("mockagne")
-local LocalMetadataReader = require("exasolvs.LocalMetadataReader")
+local LocalMetadataReader = require("exasol.evscl.LocalMetadataReader")
 
 local CATALOG_QUERY <const> = '/*snapshot execution*/ SELECT "TABLE_NAME" FROM "SYS"."EXA_ALL_TABLES" WHERE '
         .. '"TABLE_SCHEMA" = :s'
@@ -56,42 +56,6 @@ describe("Metadata reader", function()
         assert.are.same("LOCAL", reader:_get_type())
     end)
 
-    it("hides control columns", function()
-        mock_tables("S",
-                {
-                    table = "T3",
-                    columns = {
-                        {COLUMN_NAME = "C3_1", COLUMN_TYPE = "BOOLEAN"},
-                        {COLUMN_NAME = "EXA_ROW_TENANT"},
-                        {COLUMN_NAME = "EXA_ROW_ROLES"}
-                    }
-                },
-                {
-                    table = "T4",
-                    columns = {
-                        {COLUMN_NAME = "C4_1", COLUMN_TYPE = "DATE"},
-                        {COLUMN_NAME = "EXA_ROW_GROUP"}
-                    }
-                }
-        )
-        assert.are.same(
-                {
-                    tables = {
-                        {
-                            name = "T3",
-                            columns = {{name = "C3_1", dataType = {type = "BOOLEAN"}}}
-                        },
-                        {
-                            name = "T4",
-                            columns = {{name = "C4_1", dataType = {type = "DATE"}}}
-                        }
-                    },
-                    adapterNotes = "T3:tr-,T4:--g"
-                },
-                reader:read("S")
-        )
-    end)
-
     local function mock_table_with_single_column_of_type(type)
         mock_tables("S",
                 {
@@ -102,11 +66,17 @@ describe("Metadata reader", function()
     end
 
     local function assert_column_type_translation(translation)
-        assert.are.same({tables = {{name = "T", columns = {{name = "C1", dataType = translation}}}},
-                         adapterNotes = "T:---"}, reader:read("S"))
+        assert.are.same({
+            tables = {
+                {
+                    name = "T",
+                    columns = {{name = "C1", dataType = translation}}
+                }
+            }
+        }, reader:read("S"))
     end
 
-    -- [utest -> dsn~reading-source-metadata~0]
+    -- [utest -> dsn~reading-column-metadata-from-a-table~0]
     describe("translates column type:", function()
         local parameters = {
             {"BOOLEAN", {type = "BOOLEAN"}},
@@ -135,7 +105,20 @@ describe("Metadata reader", function()
         end
     end)
 
-    -- [utest -> dsn~filtering-tables~0]
+    -- [utest -> dsn~reading-table-metadata-from-a-schema~0]
+    it("can filter the tables it reads the metadata of", function()
+        mock_tables("S",
+                {table = "T1", columns = {{COLUMN_NAME = "C1_1", COLUMN_TYPE = "BOOLEAN"}}},
+                {table = "T2", columns = {{COLUMN_NAME = "C2_1", COLUMN_TYPE = "BOOLEAN"}}})
+        assert.are.same(
+                {tables = {
+                    {name = "T1", columns = {{name = "C1_1", dataType = {type = "BOOLEAN"}}}},
+                    {name = "T2", columns = {{name = "C2_1", dataType = {type = "BOOLEAN"}}}}
+                }},
+                reader:read("S"))
+    end)
+
+    -- [utest -> dsn~include-tables~0]
     it("can filter the tables it reads the metadata of", function()
         mock_tables("S",
                 {table = "T1", columns = {{COLUMN_NAME = "C1_1", COLUMN_TYPE = "BOOLEAN"}}},
@@ -146,9 +129,7 @@ describe("Metadata reader", function()
                 {tables = {
                     {name = "T2", columns = {{name = "C2_1", dataType = {type = "BOOLEAN"}}}},
                     {name = "T3", columns = {{name = "C3_1", dataType = {type = "BOOLEAN"}}}}
-                },
-                 adapterNotes = "T2:---,T3:---"
-                },
+                }},
                 reader:read("S", {"T2", "T3"}))
     end)
 

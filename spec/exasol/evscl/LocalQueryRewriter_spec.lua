@@ -1,5 +1,5 @@
 require("busted.runner")()
-local LocalQueryRewriter = require("exasolvs.LocalQueryRewriter")
+local LocalQueryRewriter = require("exasol.evscl.LocalQueryRewriter")
 
 describe("Local query rewriter", function()
     local rewriter = LocalQueryRewriter:new()
@@ -9,16 +9,17 @@ describe("Local query rewriter", function()
         assert.are_same(expected, rewritten_query)
     end
 
-    it("rewrites a query with an unprotected table", function()
+    -- [utest -> dsn~rewriting-a-query-for-local-access~0]
+    it("rewrites a query with an simple table", function()
         local original_query = {
             type = "select",
             selectList = {
-                {type = "column", name = "C1", tableName = "UNPROT"},
-                {type = "column", name = "C2", tableName = "UNPROT"}
+                {type = "column", name = "C1", tableName = "A_table"},
+                {type = "column", name = "C2", tableName = "A_table"}
             },
-            from = {type = "table", name = "UNPROT"}
+            from = {type = "table", name = "A_table"}
         }
-        assert_rewrite(original_query, "S", "UNPROT:---", 'SELECT "UNPROT"."C1", "UNPROT"."C2" FROM "S"."UNPROT"')
+        assert_rewrite(original_query, "S", nil, 'SELECT "A_table"."C1", "A_table"."C2" FROM "S"."A_table"')
     end)
 
     it("raises an error if the query to be rewritten is nil.", function()

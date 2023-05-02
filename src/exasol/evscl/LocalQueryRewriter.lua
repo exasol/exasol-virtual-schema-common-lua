@@ -2,10 +2,10 @@
 -- @classmod LocalQueryRewriter
 local LocalQueryRewriter = {_NAME = "LocalQueryRewriter"}
 LocalQueryRewriter.__index = LocalQueryRewriter
-local AbstractQueryRewriter = require("exasolvs.AbstractQueryRewriter")
+local AbstractQueryRewriter = require("exasol.evscl.AbstractQueryRewriter")
 setmetatable(LocalQueryRewriter, {__index = AbstractQueryRewriter})
 
-local QueryRenderer = require("exasolvs.QueryRenderer")
+local QueryRenderer = require("exasol.vscl.QueryRenderer")
 
 --- Create a new instance of a `LocalQueryRewriter`.
 -- @return new instance
@@ -26,6 +26,7 @@ function LocalQueryRewriter:class()
 end
 
 -- Override
+-- [impl -> dsn~rewriting-a-query-for-local-access~0]
 function LocalQueryRewriter:rewrite(original_query, source_schema_id, _, _)
     self:_validate(original_query)
     local query = self:_extend_query_with_source_schema(original_query, source_schema_id)
