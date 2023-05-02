@@ -36,7 +36,7 @@ check the respective repositories.
 ## Information for Developers
 
 * [Changelog](doc/changes/changelog.md)
-<!-- TODO: Add API documentation link after first merge to main, so that the link checker does not complain. -->
+* [API Documentation](https://exasol.github.io/exasol-virtual-schema-common-lua/api/)
 
 ### Structure
 
