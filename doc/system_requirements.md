@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Exasol Virtual Schema Common for Lua (short "EVSCL") is base library for [Virtual Schemas](https://docs.exasol.com/db/latest/database_concepts/virtual_schemas.htm) that connect to Exasol databases. 
+Exasol Virtual Schema Common for Lua (short "EVSCL") is a base library for [Virtual Schemas](https://docs.exasol.com/db/latest/database_concepts/virtual_schemas.htm) that connect to Exasol databases. 
 
 Virtual Schemas are conceptually related to database views. The main difference compared to database views is that Virtual Schema sources can be almost any data source. To make this possible, you need a so-called "Virtual Schema adapter", an Exasol extension that contains the logic to translate between the source and the projection provided by the Virtual Schema.
 
@@ -12,13 +12,27 @@ From an end-user's perspective a Virtual Schema looks and feels like an internal
 
 ### Target Audience
 
-The target audience are end-users, requirement engineers, software designers and quality assurance. See section ["Stakeholders"](#stakeholders) for more details.
+The target audience are end-users (VS Owners and Consumers), requirement engineers, software designers and quality assurance. See section ["Stakeholders"](#stakeholders) for more details.
 
 ### Goal
 
 EVSCL's main goal is to prevent code duplication in Virtual Schemas.
 
 ## Stakeholders
+
+Stakeholder have a vested interest in the project. As stakeholders are roles, many people can have the same role or one person multiple &mdash; as long as there is no conflict of interest. 
+
+### Quality Assurance
+
+Quality Assurance verifies that documents and software are made in a state-of-the art manner and that test and review processes are planned and adhered to.
+
+### Requirement Engineers
+
+Requirement Engineers collect, refine and trace the requirements of the software.
+
+### Software Designers
+
+Software Designers plan the construction of the software. Their responsibility is to create a design that fits the user requirements while balancing maintainability, security and complexity.
 
 ### Virtual Schema Owners
 
@@ -56,10 +70,10 @@ EVSCL reads the list of tables contained in the source database schema.
 
 Needs: dsn
 
-#### Reading Columns Metadata From a Table
+#### Reading Column Metadata From a Table
 `req~reading-column-metadata-from-a-table~1`
 
-EVSCL reads the list of columns and their attributes contained from a table in the source database.
+EVSCL reads the list of columns and their attributes from a table in the source database.
 
 Needs: dsn
 
@@ -72,7 +86,7 @@ Needs: dsn
 
 ### Shared Adapter Properties of Virtual Schemas That Access an Exasol Database
 
-Adapter properties allow users to configure their virtual schemas. In this section we define properties that all virtual schemas share which access an Exasol data source. 
+Adapter properties allow VS Owners to configure their virtual schemas. In this section we define properties that all virtual schemas share which access an Exasol data source. 
 
 #### Schema Name Property
 `req~schema-name-property~1`
