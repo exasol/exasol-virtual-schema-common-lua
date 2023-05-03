@@ -1,10 +1,10 @@
-# Exasol Virtual Schema Common (Lua) 1.0.1, released 2023-04-28
+# Exasol Virtual Schema Common (Lua) 1.0.1, released 2023-05-03
 
 Code name: Fixed Luarocks package contents
 
 ## Summary
 
-This is a bugfix release where fixed the contents of the produced Luarocks package. For example the missing class `ExasolBaseAdapterProperties`.
+This is a bugfix release where we fixed the contents of the produced Luarocks package. For example the missing class `ExasolBaseAdapterProperties`.
 
 Side note:
 
