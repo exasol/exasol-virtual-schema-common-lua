@@ -172,4 +172,63 @@ describe("Metadata reader", function()
         end,
                 "Column 'THE_TABLE'.'THE_COLUMN' has unsupported type 'THE_TYPE'", 1, true)
     end)
+
+    -- [utest -> dsn~table-filter-extensibility~0]
+    it("allows extending the table filter", function()
+        function reader:_is_included_table(table_id, _)
+            return table_id == "T2" or table_id == "T4"
+        end
+
+        mock_tables("S",
+                {table = "T1", columns = {{COLUMN_NAME = "C1_1", COLUMN_TYPE = "BOOLEAN"}}},
+                {table = "T2", columns = {{COLUMN_NAME = "C2_1", COLUMN_TYPE = "BOOLEAN"}}},
+                {table = "T3", columns = {{COLUMN_NAME = "C3_1", COLUMN_TYPE = "BOOLEAN"}}},
+                {table = "T4", columns = {{COLUMN_NAME = "C4_1", COLUMN_TYPE = "BOOLEAN"}}})
+        assert.are.same(
+                {tables = {
+                    {name = "T2", columns = {{name = "C2_1", dataType = {type = "BOOLEAN"}}}},
+                    {name = "T4", columns = {{name = "C4_1", dataType = {type = "BOOLEAN"}}}}
+                }},
+                reader:read("S"))
+    end)
+
+    -- [utest -> dsn~column-filter-extensibility~0]
+    it("allows extending the table filter", function()
+        function reader:_is_included_column(table_id, column_id, column_type)
+            return table_id == "T2" or column_id == "IN" or column_type == "DATE"
+        end
+        mock_tables("S",
+                {
+                    table = "T1",
+                    columns = {
+                        {COLUMN_NAME = "IN", COLUMN_TYPE = "BOOLEAN"},
+                        {COLUMN_NAME = "B", COLUMN_TYPE = "BOOLEAN"}
+                    }
+                },
+                {
+                    table = "T2",
+                    columns = {
+                        {COLUMN_NAME = "A", COLUMN_TYPE = "BOOLEAN"},
+                        {COLUMN_NAME = "B", COLUMN_TYPE = "DOUBLE PRECISION"}
+                    },
+                },
+                {
+                    table = "T3",
+                    columns = {
+                        {COLUMN_NAME = "A", COLUMN_TYPE = "BOOLEAN"},
+                        {COLUMN_NAME = "B", COLUMN_TYPE = "DATE"}
+                    }
+                })
+        assert.are.same(
+                {tables = {
+                    {name = "T1", columns = {{name = "IN", dataType = {type = "BOOLEAN"}}}},
+                    {name = "T2", columns = {
+                        {name = "A", dataType = {type = "BOOLEAN"}},
+                        {name = "B", dataType = {type = "DOUBLE PRECISION"}}
+
+                    }},
+                    {name = "T3", columns = {{name = "B", dataType = {type = "DATE"}}}}
+                }},
+                reader:read("S"))
+    end)
 end)

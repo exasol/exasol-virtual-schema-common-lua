@@ -22,7 +22,10 @@ package exasol.evscl {
     class AbstractMetadataReader <<abstract>> {
         + read(schema_id, include_tables)
         ' [dsn -> req~include-tables~1 >> impl, utest]
+        ' [dsn -> req~table-filter-extensibility~1 >> impl, utest]
         - _is_included_table(table_id, include_tables_lookup)
+        ' [dsn -> req~column-filter-extensibility~1 >> impl, utest]
+        - _is_included_column(table_id, column_id, column_type)
         ' [dsn -> req~reading-table-metadata-from-a-schema~1 >> impl, utest]
         # {abstract} _execute_table_metadata_query(schema_id)
         ' [dsn -> req~reading-column-metadata-from-a-table~1 >> impl, utest]

@@ -1,6 +1,6 @@
 rockspec_format = "3.0"
 
-local tag = "1.0.1"
+local tag = "1.1.0"
 local project = "exasol-virtual-schema-common-lua"
 
 package = project

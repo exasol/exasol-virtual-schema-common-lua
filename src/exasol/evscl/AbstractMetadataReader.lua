@@ -127,13 +127,26 @@ function AbstractMetadataReader:_translate_column_metadata(table_id, column)
     end
 end
 
+--- Decide if the column should be included in the projected virtual schema.
+-- The default implementation always returns `true`. Override this method to change the behavior.
+-- @param _ ID (aka. 'name') of the table the column belongs to
+-- @param _ ID of the column itself
+-- @param _ data type of the column
+-- @return always true
+-- @cover [impl -> dsn~column-filter-extensibility~0]
+function AbstractMetadataReader:_is_included_column(_, _, _)
+    return true
+end
+
 function AbstractMetadataReader:_translate_columns_metadata(schema_id, table_id)
     local ok, result = self:_execute_column_metadata_query(schema_id, table_id)
     local translated_columns = {}
     if ok then
         for i = 1, #result do
             local column = result[i]
-            table.insert(translated_columns, self:_translate_column_metadata(table_id, column))
+            if(self:_is_included_column(table_id, column.COLUMN_NAME, column.COLUMN_TYPE)) then
+                table.insert(translated_columns, self:_translate_column_metadata(table_id, column))
+            end
         end
         return translated_columns
     else
@@ -153,9 +166,13 @@ function AbstractMetadataReader:_execute_column_metadata_query(_, _)
 end
 
 --- Check if a table should be included in the the virtual schema.
+-- The default behavior is to return `true` if the table ID appears in the lookup table. Override in your derived
+-- metadata reader to change this behavior.
 -- @param table_id name of the table to check
 -- @param include_tables_lookup lookup table for names of database tables to include
+-- @return `true` if the table ID appears in the provided lookup table
 -- @cover [impl -> dsn~include-tables~0]
+-- @cover [impl -> dsn~table-filter-extensibility~0]
 function AbstractMetadataReader:_is_included_table(table_id, include_tables_lookup)
     return include_tables_lookup[table_id]
 end

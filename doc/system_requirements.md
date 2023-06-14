@@ -102,6 +102,28 @@ EVSCL provides and API to read the list of source tables that should be present 
 
 Needs: dsn
 
+#### Table Filter Extensibility
+`req~table-filter-extensibility~1`
+
+EVSCL lets library users change the behavior of the table filter.
+
+Rationale:
+
+While in most VS the standard behavior of letting the VS users decide which tables should be included is sufficient, sometimes the developers of a VS need a way to filter out meta tables (like control tables or logs).
+
+Needs: dsn
+
+#### Column Filter Extensibility
+`req~column-filter-extensibility~1`
+
+EVSCL lets library users change the behavior of the column filter.
+
+Rationale:
+
+While in most VS the standard behavior of not filtering any columns is sufficient, sometimes the developers of a VS need a way to filter out meta columns (like control columns or ETL columns).
+
+Needs: dsn
+
 #### Validation of Common Exasol Virtual Schema Properties
 `req~evscl~property~validation~1`
 
