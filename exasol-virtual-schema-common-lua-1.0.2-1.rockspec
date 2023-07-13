@@ -1,6 +1,6 @@
 rockspec_format = "3.0"
 
-local tag = "1.0.1"
+local tag = "1.0.2"
 local project = "exasol-virtual-schema-common-lua"
 
 package = project
@@ -22,7 +22,7 @@ Common parts that are the same for all Virtual Schemas are in virtual-schema-com
 }
 
 dependencies = {
-    "virtual-schema-common-lua = 4.0.0",
+    "virtual-schema-common-lua = 4.0.1",
 }
 
 build_dependencies = {
