@@ -11,11 +11,7 @@ readonly src_module_path="$base_dir/src"
 readonly test_module_path="$base_dir/spec"
 
 lua-format --config="$base_dir/.lua-format" --verbose --in-place -- \
-  "$src_module_path"/luasql/*.lua \
-  "$src_module_path"/luasql/exasol/*.lua \
-  "$test_module_path"/*.lua \
-  "$test_module_path"/*/*.lua
-
-lua-format --config="$base_dir/.lua-format" --column-limit=75 --verbose --in-place "$base_dir"/doc/user_guide/examples.lua
+  "$src_module_path"/exasol/evscl/*.lua \
+  "$test_module_path"/exasol/evscl/*.lua
 
 "$base_dir/tools/run_luacheck.sh"
