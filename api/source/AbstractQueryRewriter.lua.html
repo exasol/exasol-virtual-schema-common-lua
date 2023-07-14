@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Exasol Virtual Schema Common Lua</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/AbstractMetadataReader.lua.html">AbstractMetadataReader.lua</a></li>
+  <li><strong>AbstractQueryRewriter.lua</strong></li>
+  <li><a href="../source/ExasolBaseAdapterProperties.lua.html">ExasolBaseAdapterProperties.lua</a></li>
+  <li><a href="../source/LocalMetadataReader.lua.html">LocalMetadataReader.lua</a></li>
+  <li><a href="../source/LocalQueryRewriter.lua.html">LocalQueryRewriter.lua</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/LocalMetadataReader.html">LocalMetadataReader</a></li>
+  <li><a href="../classes/AbstractQueryRewriter.html">AbstractQueryRewriter</a></li>
+  <li><a href="../classes/ExasolBaseAdapterProperties.html">ExasolBaseAdapterProperties</a></li>
+  <li><a href="../classes/LocalMetadataReader.html">LocalMetadataReader</a></li>
+  <li><a href="../classes/LocalQueryRewriter.html">LocalQueryRewriter</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>AbstractQueryRewriter.lua</h2>
+<pre>
+<span class="comment">--- This class rewrites the query.
+</span><span class="comment">-- @classmod AbstractQueryRewriter
+</span><span class="keyword">local</span> AbstractQueryRewriter = {_NAME = <span class="string">"AbstractQueryRewriter"</span>}
+AbstractQueryRewriter.__index = AbstractQueryRewriter
+
+<span class="keyword">local</span> log = <span class="global">require</span>(<span class="string">"remotelog"</span>)
+<span class="keyword">local</span> ExaError = <span class="global">require</span>(<span class="string">"ExaError"</span>)
+
+<span class="comment">--- Create a new instance of a `QueryRewriter`.
+</span><a id="11"></a><span class="comment">-- @return new instance
+</span><span class="keyword">function</span> AbstractQueryRewriter:<span class="function-name">new</span>()
+    <span class="keyword">local</span> instance = <span class="global">setmetatable</span>({}, self)
+    instance:<span class="function-name">_init</span>()
+    <span class="keyword">return</span> instance
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractQueryRewriter:<span class="function-name">_init</span>()
+    <span class="comment">-- intentionally empty
+</span><span class="keyword">end</span>
+
+<span class="comment">--- Get a the class of the object.
+</span><a id="23"></a><span class="comment">-- @return class
+</span><span class="keyword">function</span> AbstractQueryRewriter:<span class="function-name">class</span>()
+    <span class="keyword">return</span> AbstractQueryRewriter
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractQueryRewriter:<span class="function-name">_validate</span>(query)
+    <span class="keyword">if</span> <span class="keyword">not</span> query <span class="keyword">then</span>
+        ExaError.<span class="global">error</span>(<span class="string">"E-EVSCL-QRW-1"</span>, <span class="string">"Unable to rewrite query because it was &lt;nil&gt;."</span>)
+    <span class="keyword">end</span>
+    <span class="keyword">local</span> push_down_type = query.<span class="global">type</span>
+    <span class="keyword">if</span>(push_down_type ~= <span class="string">"select"</span>) <span class="keyword">then</span>
+        ExaError.<span class="global">error</span>(<span class="string">"E-EVSCL-QRW-2"</span>, <span class="string">"Unable to rewrite push-down query of type {{query_type}}"</span>
+            .. <span class="string">". Only 'select' is supported."</span>, {query_type =  push_down_type})
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">local</span> <span class="keyword">function</span> <span class="function-name">is_select_star</span>(select_list)
+    <span class="keyword">return</span> select_list == <span class="keyword">nil</span>
+<span class="keyword">end</span>
+
+<span class="keyword">local</span> <span class="keyword">function</span> <span class="function-name">is_empty_select_list</span>(select_list)
+    <span class="keyword">return</span> <span class="global">next</span>(select_list) == <span class="keyword">nil</span>
+<span class="keyword">end</span>
+
+<span class="keyword">local</span> <span class="keyword">function</span> <span class="function-name">replace_empty_select_list_with_constant_expression</span>(query)
+    log.<span class="global">debug</span>(<span class="string">'Empty select list pushed down. Replacing with constant expression to get correct number of rows.'</span>)
+    query.selectList = {{<span class="global">type</span> = <span class="string">"literal_bool"</span>, value = <span class="string">"true"</span>}}
+<span class="keyword">end</span>
+
+<span class="keyword">local</span> <span class="keyword">function</span> <span class="function-name">extend_query_element_with_source_schema</span>(element, source_schema_id)
+    <span class="keyword">local</span> extended_element = {}
+    <span class="keyword">if</span>(<span class="global">type</span>(element) == <span class="string">"table"</span>) <span class="keyword">then</span>
+        <span class="keyword">for</span> key, value <span class="keyword">in</span> <span class="global">pairs</span>(element) <span class="keyword">do</span>
+            <span class="keyword">if</span>(<span class="global">type</span>(value) == <span class="string">"table"</span>) <span class="keyword">then</span>
+                extended_element[key] = <span class="function-name">extend_query_element_with_source_schema</span>(value, source_schema_id)
+            <span class="keyword">else</span>
+                extended_element[key] = value
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="keyword">if</span>(element.<span class="global">type</span> ~= <span class="keyword">nil</span> <span class="keyword">and</span> element.<span class="global">type</span> == <span class="string">"table"</span> <span class="keyword">and</span> element.schema == <span class="keyword">nil</span>) <span class="keyword">then</span>
+            log.<span class="global">debug</span>(<span class="string">"Extended table '%s' with source schema '%s' "</span>, element.name, source_schema_id)
+            extended_element.schema = source_schema_id
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="keyword">return</span> extended_element
+<span class="keyword">end</span>
+
+<span class="comment">--- Add the source database schema to all query elements that represent a table.
+</span><span class="comment">-- Table elements in the query structure are lacking the information which schema they belong too. But without this
+</span><span class="comment">-- information, the database cannot locate the table, because the table name is only valid in the context of the
+</span><span class="comment">-- containing schema. So this method adds the missing information by adding the source schema of the Virtual Schema
+</span><span class="comment">-- into the table elements.
+</span><a id="75"></a><span class="comment">-- @return query with table elements that contain the source schema
+</span><span class="keyword">function</span> AbstractQueryRewriter:<span class="function-name">_extend_query_with_source_schema</span>(query, source_schema_id)
+    <span class="keyword">return</span> <span class="function-name">extend_query_element_with_source_schema</span>(query, source_schema_id)
+<span class="keyword">end</span>
+
+<span class="comment">--- Make sure the select list is never empty.
+</span><span class="comment">-- &lt;ul&gt;
+</span><span class="comment">-- &lt;li&gt;Expand the asterisk wildcard in the select list to a list of columns&lt;/li&gt;
+</span><span class="comment">-- &lt;li&gt;Expand an empty select list to a constant expression&lt;/li&gt;
+</span><span class="comment">-- &lt;/ul&gt;
+</span><span class="comment">-- @param query query as provided by the VS interface
+</span><a id="86"></a><span class="comment">-- @return query with non-empty select list
+</span><span class="keyword">function</span> AbstractQueryRewriter:<span class="function-name">_expand_select_list</span>(query)
+    <span class="keyword">if</span> <span class="function-name">is_select_star</span>(query.selectList) <span class="keyword">then</span>
+        log.<span class="global">debug</span>(<span class="string">'Missing select list interpreted as: SELECT *'</span>)
+    <span class="keyword">elseif</span> <span class="function-name">is_empty_select_list</span>(query.selectList) <span class="keyword">then</span>
+        <span class="function-name">replace_empty_select_list_with_constant_expression</span>(query)
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Rewrite the original query.
+</span><span class="comment">-- @param _ structure containing the original push-down query
+</span><span class="comment">-- @param _ source schema the Exasol VS is put on top of
+</span><span class="comment">-- @param _ cache taken from the adapter notes
+</span><span class="comment">-- @param _ list of tables that appear in the query
+</span><a id="100"></a><span class="comment">-- @return string containing the rewritten query
+</span><span class="keyword">function</span> AbstractQueryRewriter:<span class="function-name">rewrite</span>(_, _, _, _)
+    <span class="global">error</span>(<span class="string">"Called abstract function 'rewrite'."</span>)
+<span class="keyword">end</span>
+
+<span class="keyword">return</span> AbstractQueryRewriter</pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-07-14 07:02:43 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

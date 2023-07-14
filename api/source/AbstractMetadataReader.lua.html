@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Exasol Virtual Schema Common Lua</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><strong>AbstractMetadataReader.lua</strong></li>
+  <li><a href="../source/AbstractQueryRewriter.lua.html">AbstractQueryRewriter.lua</a></li>
+  <li><a href="../source/ExasolBaseAdapterProperties.lua.html">ExasolBaseAdapterProperties.lua</a></li>
+  <li><a href="../source/LocalMetadataReader.lua.html">LocalMetadataReader.lua</a></li>
+  <li><a href="../source/LocalQueryRewriter.lua.html">LocalQueryRewriter.lua</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/LocalMetadataReader.html">LocalMetadataReader</a></li>
+  <li><a href="../classes/AbstractQueryRewriter.html">AbstractQueryRewriter</a></li>
+  <li><a href="../classes/ExasolBaseAdapterProperties.html">ExasolBaseAdapterProperties</a></li>
+  <li><a href="../classes/LocalMetadataReader.html">LocalMetadataReader</a></li>
+  <li><a href="../classes/LocalQueryRewriter.html">LocalQueryRewriter</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>AbstractMetadataReader.lua</h2>
+<pre>
+<span class="comment">--- This class reads schema, table and column metadata from the source.
+</span><span class="comment">-- @classmod LocalMetadataReader
+</span><span class="keyword">local</span> AbstractMetadataReader = {}
+AbstractMetadataReader.__index = AbstractMetadataReader
+
+<span class="keyword">local</span> log = <span class="global">require</span>(<span class="string">"remotelog"</span>)
+<span class="keyword">local</span> ExaError = <span class="global">require</span>(<span class="string">"ExaError"</span>)
+<span class="keyword">local</span> text = <span class="global">require</span>(<span class="string">"exasol.vscl.text"</span>)
+
+<span class="keyword">local</span> DEFAULT_SRID &lt;const&gt; = <span class="number">0</span>
+
+<span class="comment">--- Create a new `AbstractMetadataReader`.
+</span><span class="comment">-- @param exasol_context handle to local database functions and status
+</span><a id="15"></a><span class="comment">-- @return metadata reader
+</span><span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">new</span>(exasol_context)
+    <span class="global">assert</span>(exasol_context ~= <span class="keyword">nil</span>,
+            <span class="string">"The metadata reader requires an Exasol context handle in order to read metadata from the database"</span>)
+    <span class="keyword">local</span> instance = <span class="global">setmetatable</span>({}, self)
+    instance:<span class="function-name">_init</span>(exasol_context)
+    <span class="keyword">return</span> instance
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_init</span>(exasol_context)
+    self._exasol_context = exasol_context
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_get_exasol_context</span>()
+    <span class="keyword">return</span> self._exasol_context
+<span class="keyword">end</span>
+
+<span class="comment">--- Get the metadata reader type
+</span><span class="comment">-- Override this function in the derived class.
+</span><a id="34"></a><span class="comment">-- @return always 'LOCAL'
+</span><span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_get_type</span>()
+    <span class="global">error</span>(<span class="string">"Called abstract function '_get_type'."</span>)
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_translate_parameterless_type</span>(column_id, column_type)
+    <span class="keyword">return</span> {name = column_id, dataType = {<span class="global">type</span> = column_type}}
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_translate_decimal_type</span>(column_id, column_type)
+    <span class="keyword">local</span> precision, scale = <span class="global">string</span>.<span class="function-name">match</span>(column_type, <span class="string">"DECIMAL%((%d+),(%d+)%)"</span>)
+    <span class="keyword">return</span> {name = column_id,
+            dataType = {<span class="global">type</span> = <span class="string">"DECIMAL"</span>, precision = <span class="global">tonumber</span>(precision), scale = <span class="global">tonumber</span>(scale)}}
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_translate_char_type</span>(column_id, column_type)
+    <span class="keyword">local</span> <span class="global">type</span>, size, character_set = <span class="global">string</span>.<span class="function-name">match</span>(column_type, <span class="string">"(%a+)%((%d+)%) (%w+)"</span>)
+    <span class="keyword">return</span> {name = column_id, dataType = {<span class="global">type</span> = <span class="global">type</span>, size = <span class="global">tonumber</span>(size), characterSet = character_set}}
+<span class="keyword">end</span>
+
+<span class="comment">-- Note that while users can optionally specify hash sizes in BITS, this is just a convenience method. Exasol
+</span><span class="comment">-- internally always stores hash size in bytes.
+</span><span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_translate_hash_type</span>(column_id, column_type)
+    <span class="keyword">local</span> size = <span class="global">string</span>.<span class="function-name">match</span>(column_type, <span class="string">"HASHTYPE%((%d+) BYTE%)"</span>)
+    <span class="keyword">return</span> {name = column_id, dataType = {<span class="global">type</span> = <span class="string">"HASHTYPE"</span>, bytesize = <span class="global">tonumber</span>(size)}}
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_translate_timestamp_type</span>(column_id, local_time)
+    <span class="keyword">if</span> local_time <span class="keyword">then</span>
+        <span class="keyword">return</span> {name = column_id, dataType = {<span class="global">type</span> = <span class="string">"TIMESTAMP"</span>, withLocalTimeZone = <span class="keyword">true</span>}}
+    <span class="keyword">else</span>
+        <span class="keyword">return</span> {name = column_id, dataType = {<span class="global">type</span> = <span class="string">"TIMESTAMP"</span>}}
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_translate_geometry_type</span>(column_id, column_type)
+    <span class="keyword">local</span> srid = <span class="global">string</span>.<span class="function-name">match</span>(column_type, <span class="string">"GEOMETRY%((%d+)%)"</span>)
+    <span class="keyword">if</span> (srid == <span class="keyword">nil</span>) <span class="keyword">then</span>
+        srid = DEFAULT_SRID
+    <span class="keyword">else</span>
+        srid = <span class="global">tonumber</span>(srid)
+    <span class="keyword">end</span>
+    <span class="keyword">return</span> {name = column_id, dataType = {<span class="global">type</span> = <span class="string">"GEOMETRY"</span>, srid = srid}}
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_translate_interval_year_to_month_type</span>(column_id, column_type)
+    <span class="keyword">local</span> precision = <span class="global">string</span>.<span class="function-name">match</span>(column_type, <span class="string">"INTERVAL YEAR%((%d+)%) TO MONTH"</span>)
+    <span class="keyword">return</span>
+    {
+        name = column_id,
+        dataType = {<span class="global">type</span> = <span class="string">"INTERVAL"</span>, fromTo = <span class="string">"YEAR TO MONTH"</span>, precision = <span class="global">tonumber</span>(precision)}
+    }
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_translate_interval_day_to_second</span>(column_id, column_type)
+    <span class="keyword">local</span> precision, fraction = <span class="global">string</span>.<span class="function-name">match</span>(column_type, <span class="string">"INTERVAL DAY%((%d+)%) TO SECOND%((%d+)%)"</span>)
+    <span class="keyword">return</span>
+    {
+        name = column_id,
+        dataType = {
+            <span class="global">type</span> = <span class="string">"INTERVAL"</span>,
+            fromTo = <span class="string">"DAY TO SECONDS"</span>,
+            precision = <span class="global">tonumber</span>(precision),
+            fraction = <span class="global">tonumber</span>(fraction)
+        }
+    }
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_translate_column_metadata</span>(table_id, column)
+    <span class="keyword">local</span> column_id = column.COLUMN_NAME
+    <span class="keyword">local</span> column_type = column.COLUMN_TYPE
+    <span class="keyword">if</span> (column_type == <span class="string">"BOOLEAN"</span>) <span class="keyword">or</span> (column_type == <span class="string">"DATE"</span>) <span class="keyword">or</span> text.<span class="function-name">starts_with</span>(column_type, <span class="string">"DOUBLE"</span>) <span class="keyword">then</span>
+        <span class="keyword">return</span> self:<span class="function-name">_translate_parameterless_type</span>(column_id, column_type)
+    <span class="keyword">elseif</span> text.<span class="function-name">starts_with</span>(column_type, <span class="string">"DECIMAL"</span>) <span class="keyword">then</span>
+        <span class="keyword">return</span> self:<span class="function-name">_translate_decimal_type</span>(column_id, column_type)
+    <span class="keyword">elseif</span> text.<span class="function-name">starts_with</span>(column_type, <span class="string">"CHAR"</span>) <span class="keyword">or</span> text.<span class="function-name">starts_with</span>(column_type, <span class="string">"VARCHAR"</span>) <span class="keyword">then</span>
+        <span class="keyword">return</span> self:<span class="function-name">_translate_char_type</span>(column_id, column_type)
+    <span class="keyword">elseif</span> text.<span class="function-name">starts_with</span>(column_type, <span class="string">"HASHTYPE"</span>) <span class="keyword">then</span>
+        <span class="keyword">return</span> self:<span class="function-name">_translate_hash_type</span>(column_id, column_type)
+    <span class="keyword">elseif</span> <span class="global">string</span>.<span class="function-name">find</span>(column_type, <span class="string">"WITH LOCAL TIME ZONE"</span>, <span class="number">1</span>, <span class="keyword">true</span>) <span class="keyword">then</span>
+        <span class="keyword">return</span> self:<span class="function-name">_translate_timestamp_type</span>(column_id, <span class="keyword">true</span>)
+    <span class="keyword">elseif</span> text.<span class="function-name">starts_with</span>(column_type, <span class="string">"TIMESTAMP"</span>) <span class="keyword">then</span>
+        <span class="keyword">return</span> self:<span class="function-name">_translate_timestamp_type</span>(column_id, <span class="keyword">false</span>)
+    <span class="keyword">elseif</span> text.<span class="function-name">starts_with</span>(column_type, <span class="string">"GEOMETRY"</span>) <span class="keyword">then</span>
+        <span class="keyword">return</span> self:<span class="function-name">_translate_geometry_type</span>(column_id, column_type)
+    <span class="keyword">elseif</span> text.<span class="function-name">starts_with</span>(column_type, <span class="string">"INTERVAL YEAR"</span>) <span class="keyword">then</span>
+        <span class="keyword">return</span> self:<span class="function-name">_translate_interval_year_to_month_type</span>(column_id, column_type)
+    <span class="keyword">elseif</span> text.<span class="function-name">starts_with</span>(column_type, <span class="string">"INTERVAL DAY"</span>) <span class="keyword">then</span>
+        <span class="keyword">return</span> self:<span class="function-name">_translate_interval_day_to_second</span>(column_id, column_type)
+    <span class="keyword">else</span>
+        ExaError:<span class="function-name">new</span>(<span class="string">"E-EVSCL-MDR-4"</span>, <span class="string">"Column {{table}}.{{column}} has unsupported type {{type}}."</span>,
+                {<span class="global">table</span> = table_id, column = column_id, <span class="global">type</span> = column_type})
+                :<span class="function-name">add_ticket_mitigation</span>()
+                :<span class="function-name">raise</span>()
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_translate_columns_metadata</span>(schema_id, table_id)
+    <span class="keyword">local</span> ok, result = self:<span class="function-name">_execute_column_metadata_query</span>(schema_id, table_id)
+    <span class="keyword">local</span> translated_columns = {}
+    <span class="keyword">if</span> ok <span class="keyword">then</span>
+        <span class="keyword">for</span> i = <span class="number">1</span>, #result <span class="keyword">do</span>
+            <span class="keyword">local</span> column = result[i]
+            <span class="global">table</span>.<span class="function-name">insert</span>(translated_columns, self:<span class="function-name">_translate_column_metadata</span>(table_id, column))
+        <span class="keyword">end</span>
+        <span class="keyword">return</span> translated_columns
+    <span class="keyword">else</span>
+        ExaError.<span class="global">error</span>(<span class="string">"E-EVSCL-MDR-3"</span>,
+                <span class="string">"Unable to read column metadata from source table {{schema}}.{{table}}. Caused by: {{cause}}"</span>,
+                {schema = schema_id, <span class="global">table</span> = table_id, cause = result.error_message})
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Execute a query that produces the column metadata of a table in a schema.
+</span><span class="comment">-- @param _ schema name
+</span><span class="comment">-- @param _ table name
+</span><span class="comment">-- @return result set consisting of columns with name and type
+</span><a id="151"></a><span class="comment">-- @cover [impl -&gt; dsn~reading-column-metadata-from-a-table~0]
+</span><span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_execute_column_metadata_query</span>(_, _)
+    <span class="global">error</span>(<span class="string">"Called abstract function '_execute_colum_metadata_query'."</span>)
+<span class="keyword">end</span>
+
+<span class="comment">--- Check if a table should be included in the the virtual schema.
+</span><span class="comment">-- @param table_id name of the table to check
+</span><span class="comment">-- @param include_tables_lookup lookup table for names of database tables to include
+</span><a id="159"></a><span class="comment">-- @cover [impl -&gt; dsn~include-tables~0]
+</span><span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_is_included_table</span>(table_id, include_tables_lookup)
+    <span class="keyword">return</span> include_tables_lookup[table_id]
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_create_lookup</span>(include_tables)
+    <span class="keyword">local</span> lookup = {}
+    <span class="keyword">if</span> include_tables == <span class="keyword">nil</span> <span class="keyword">then</span>
+        <span class="global">setmetatable</span>(lookup, {__index = <span class="keyword">function</span>(_, _)
+            <span class="keyword">return</span> <span class="keyword">true</span>
+        <span class="keyword">end</span>})
+    <span class="keyword">else</span>
+        log.<span class="global">debug</span>(<span class="string">"Setting filter for metadata scan to the following tables: "</span>
+                .. <span class="global">table</span>.<span class="function-name">concat</span>(include_tables, <span class="string">", "</span>))
+        <span class="keyword">for</span> _, table_id <span class="keyword">in</span> <span class="global">ipairs</span>(include_tables) <span class="keyword">do</span>
+            lookup[table_id] = <span class="keyword">true</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="keyword">return</span> lookup
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_translate_table_scan_results</span>(schema_id, result, include_tables)
+    <span class="keyword">local</span> tables = {}
+    <span class="keyword">local</span> include_tables_lookup = self:<span class="function-name">_create_lookup</span>(include_tables)
+    <span class="keyword">for</span> i = <span class="number">1</span>, #result <span class="keyword">do</span>
+        <span class="keyword">local</span> table_id = result[i].TABLE_NAME
+        <span class="keyword">if</span> self:<span class="function-name">_is_included_table</span>(table_id, include_tables_lookup) <span class="keyword">then</span>
+            <span class="keyword">local</span> columns = self:<span class="function-name">_translate_columns_metadata</span>(schema_id, table_id)
+            <span class="global">table</span>.<span class="function-name">insert</span>(tables, {name = table_id, columns = columns})
+            log.<span class="global">debug</span>(<span class="string">"Found table '%s' (%d columns)."</span>)
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="keyword">return</span> tables
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_translate_table_metadata</span>(schema_id, include_tables)
+    <span class="keyword">local</span> ok, result = self:<span class="function-name">_execute_table_metadata_query</span>(schema_id)
+    <span class="keyword">if</span> ok <span class="keyword">then</span>
+        <span class="keyword">return</span> self:<span class="function-name">_translate_table_scan_results</span>(schema_id, result, include_tables)
+    <span class="keyword">else</span>
+        ExaError.<span class="global">error</span>(<span class="string">"E-EVSCL-MDR-2"</span>,
+                <span class="string">"Unable to read table metadata from source schema {{schema}}. Caused by: {{cause}}"</span>,
+                {schema = schema_id, cause = result.error_message})
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Execute a query that produces the list of table in the given schema.
+</span><span class="comment">-- @param _ schema name
+</span><span class="comment">-- @return result set with table names
+</span><a id="208"></a><span class="comment">-- @cover [impl -&gt; dsn~reading-table-metadata-from-a-schema~0]
+</span><span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">_execute_table_metadata_query</span>(_)
+    <span class="global">error</span>(<span class="string">"Called abstract function '_execute_table_metadata_query'."</span>)
+<span class="keyword">end</span>
+
+<span class="comment">--- Read the database metadata of the given schema (i.e. the internal structure of that schema)
+</span><span class="comment">-- &lt;p&gt;
+</span><span class="comment">-- The scan can optionally be limited to a set of user-defined tables. If the list of tables to include in the scan
+</span><span class="comment">-- is omitted, then all tables in the source schema are scanned and reported.
+</span><span class="comment">-- &lt;/p&gt;
+</span><span class="comment">-- @param schema_id schema to be scanned
+</span><span class="comment">-- @param include_tables list of tables to be included in the scan (optional, defaults to all tables in the schema)
+</span><a id="220"></a><span class="comment">-- @return schema metadata
+</span><span class="keyword">function</span> AbstractMetadataReader:<span class="function-name">read</span>(schema_id, include_tables)
+    log.<span class="global">debug</span>(<span class="string">"Reading metadata of source schema '"</span> .. schema_id .. <span class="string">"'"</span>)
+    <span class="keyword">local</span> tables = self:<span class="function-name">_translate_table_metadata</span>(schema_id, include_tables)
+    <span class="keyword">return</span> {tables = tables}
+<span class="keyword">end</span>
+
+<span class="keyword">return</span> AbstractMetadataReader</pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-07-14 07:02:43 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

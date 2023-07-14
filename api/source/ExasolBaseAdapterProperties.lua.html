@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Exasol Virtual Schema Common Lua</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/AbstractMetadataReader.lua.html">AbstractMetadataReader.lua</a></li>
+  <li><a href="../source/AbstractQueryRewriter.lua.html">AbstractQueryRewriter.lua</a></li>
+  <li><strong>ExasolBaseAdapterProperties.lua</strong></li>
+  <li><a href="../source/LocalMetadataReader.lua.html">LocalMetadataReader.lua</a></li>
+  <li><a href="../source/LocalQueryRewriter.lua.html">LocalQueryRewriter.lua</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/LocalMetadataReader.html">LocalMetadataReader</a></li>
+  <li><a href="../classes/AbstractQueryRewriter.html">AbstractQueryRewriter</a></li>
+  <li><a href="../classes/ExasolBaseAdapterProperties.html">ExasolBaseAdapterProperties</a></li>
+  <li><a href="../classes/LocalMetadataReader.html">LocalMetadataReader</a></li>
+  <li><a href="../classes/LocalQueryRewriter.html">LocalQueryRewriter</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>ExasolBaseAdapterProperties.lua</h2>
+<pre>
+<span class="comment">--- This class abstracts access to the user-defined properties of the Virtual Schema.
+</span><span class="comment">-- @classmod ExasolBaseAdapterProperties
+</span><span class="keyword">local</span> ExasolBaseAdapterProperties = {}
+ExasolBaseAdapterProperties.__index = ExasolBaseAdapterProperties
+<span class="keyword">local</span> AdapterProperties = <span class="global">require</span>(<span class="string">"exasol.vscl.AdapterProperties"</span>)
+<span class="global">setmetatable</span>(ExasolBaseAdapterProperties, AdapterProperties)
+
+<span class="keyword">local</span> ExaError = <span class="global">require</span>(<span class="string">"ExaError"</span>)
+<span class="keyword">local</span> text = <span class="global">require</span>(<span class="string">"exasol.vscl.text"</span>)
+
+<span class="comment">--- Create a new `ExasolAdapterProperties` instance
+</span><span class="comment">-- @param raw_properties unparsed user-defined properties
+</span><a id="14"></a><span class="comment">-- @return new instance
+</span><span class="keyword">function</span> ExasolBaseAdapterProperties:<span class="function-name">new</span>(raw_properties)
+    <span class="keyword">local</span> instance = <span class="global">setmetatable</span>({}, self)
+    instance:<span class="function-name">_init</span>(raw_properties)
+    <span class="keyword">return</span> instance
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> ExasolBaseAdapterProperties:<span class="function-name">_init</span>(raw_properties)
+    AdapterProperties.<span class="function-name">_init</span>(self, raw_properties)
+<span class="keyword">end</span>
+
+<span class="comment">--- Get the class of the object
+</span><a id="26"></a><span class="comment">-- @return class
+</span><span class="keyword">function</span> ExasolBaseAdapterProperties:<span class="function-name">class</span>()
+    <span class="keyword">return</span> ExasolBaseAdapterProperties
+<span class="keyword">end</span>
+
+<span class="keyword">local</span> SCHEMA_NAME_PROPERTY &lt;const&gt; = <span class="string">"SCHEMA_NAME"</span>
+<span class="keyword">local</span> TABLE_FILTER_PROPERTY &lt;const&gt; = <span class="string">"TABLE_FILTER"</span>
+
+<span class="comment">--- Validate the adapter properties.
+</span><a id="35"></a><span class="comment">-- @raise validation error
+</span><span class="keyword">function</span> ExasolBaseAdapterProperties:<span class="function-name">validate</span>()
+    AdapterProperties.<span class="function-name">validate</span>(self) <span class="comment">-- super call
+</span>    <span class="keyword">if</span> <span class="keyword">not</span> self:<span class="function-name">has_value</span>(SCHEMA_NAME_PROPERTY) <span class="keyword">then</span>
+        ExaError:<span class="function-name">new</span>(<span class="string">"F-RLS-PROP-1"</span>, <span class="string">"Missing mandatory property '"</span> .. SCHEMA_NAME_PROPERTY .. <span class="string">"'."</span>)
+                :<span class="function-name">add_mitigations</span>(<span class="string">"Please define the name of the source schema."</span>):<span class="function-name">raise</span>(<span class="number">0</span>)
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> self:<span class="function-name">is_property_set</span>(TABLE_FILTER_PROPERTY) <span class="keyword">and</span> self:<span class="function-name">is_empty</span>(TABLE_FILTER_PROPERTY) <span class="keyword">then</span>
+        ExaError:<span class="function-name">new</span>(<span class="string">"F-RLS-PROP-2"</span>, <span class="string">"Table filter property '"</span> .. TABLE_FILTER_PROPERTY .. <span class="string">"' must not be empty."</span>)
+                :<span class="function-name">add_mitigations</span>(<span class="string">"Please either remove the property or provide a comma separated list of tables"</span>
+                .. <span class="string">" to be included in the Virtual Schema."</span>):<span class="function-name">raise</span>(<span class="number">0</span>)
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Get the name of the Virtual Schema's source schema.
+</span><span class="comment">-- @return name of the source schema
+</span><a id="51"></a><span class="comment">-- @cover [impl -&gt; dsn~schema-name-property~0]
+</span><span class="keyword">function</span> ExasolBaseAdapterProperties:<span class="function-name">get_schema_name</span>()
+    <span class="keyword">return</span> self:<span class="function-name">get</span>(SCHEMA_NAME_PROPERTY)
+<span class="keyword">end</span>
+
+<span class="comment">--- Get the list of tables that the Virtual Schema should show after applying the table filter.
+</span><span class="comment">-- @return list of tables
+</span><a id="58"></a><span class="comment">-- @cover [impl -&gt; dsn~table-filter-property~0]
+</span><span class="keyword">function</span> ExasolBaseAdapterProperties:<span class="function-name">get_table_filter</span>()
+    <span class="keyword">local</span> filtered_tables = self:<span class="function-name">get</span>(TABLE_FILTER_PROPERTY)
+    <span class="keyword">return</span> text.<span class="function-name">split</span>(filtered_tables)
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> ExasolBaseAdapterProperties:<span class="function-name">__tostring</span>()
+    <span class="keyword">return</span> AdapterProperties.<span class="function-name">__tostring</span>(self)
+<span class="keyword">end</span>
+
+<span class="keyword">return</span> ExasolBaseAdapterProperties</pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-07-14 07:02:43 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

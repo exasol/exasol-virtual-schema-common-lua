@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Exasol Virtual Schema Common Lua</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/LocalMetadataReader.html">LocalMetadataReader</a></li>
+  <li><a href="../classes/AbstractQueryRewriter.html">AbstractQueryRewriter</a></li>
+  <li><strong>ExasolBaseAdapterProperties</strong></li>
+  <li><a href="../classes/LocalMetadataReader.html">LocalMetadataReader</a></li>
+  <li><a href="../classes/LocalQueryRewriter.html">LocalQueryRewriter</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>ExasolBaseAdapterProperties</code></h1>
+<p>This class abstracts access to the user-defined properties of the Virtual Schema.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#exasolbaseadapterproperties:new">exasolbaseadapterproperties:new(raw_properties)</a></td>
+	<td class="summary">Create a new <code>ExasolAdapterProperties</code> instance</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#exasolbaseadapterproperties:class">exasolbaseadapterproperties:class()</a></td>
+	<td class="summary">Get the class of the object</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#exasolbaseadapterproperties:validate">exasolbaseadapterproperties:validate()</a></td>
+	<td class="summary">Validate the adapter properties.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#exasolbaseadapterproperties:get_schema_name">exasolbaseadapterproperties:get_schema_name()</a></td>
+	<td class="summary">Get the name of the Virtual Schema's source schema.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#exasolbaseadapterproperties:get_table_filter">exasolbaseadapterproperties:get_table_filter()</a></td>
+	<td class="summary">Get the list of tables that the Virtual Schema should show after applying the table filter.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "exasolbaseadapterproperties:new"></a>
+    <strong>exasolbaseadapterproperties:new(raw_properties)</strong>
+    <a style="float:right;" href="../source/ExasolBaseAdapterProperties.lua.html#14">line 14</a>
+    </dt>
+    <dd>
+    Create a new <code>ExasolAdapterProperties</code> instance
+
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">raw_properties</span>
+         unparsed user-defined properties
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new instance
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "exasolbaseadapterproperties:class"></a>
+    <strong>exasolbaseadapterproperties:class()</strong>
+    <a style="float:right;" href="../source/ExasolBaseAdapterProperties.lua.html#26">line 26</a>
+    </dt>
+    <dd>
+    Get the class of the object
+
+    </ul>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        class
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "exasolbaseadapterproperties:validate"></a>
+    <strong>exasolbaseadapterproperties:validate()</strong>
+    <a style="float:right;" href="../source/ExasolBaseAdapterProperties.lua.html#35">line 35</a>
+    </dt>
+    <dd>
+    Validate the adapter properties.
+
+    </ul>
+
+
+
+    <h3>Raises:</h3>
+    validation error
+
+
+
+</dd>
+    <dt>
+    <a name = "exasolbaseadapterproperties:get_schema_name"></a>
+    <strong>exasolbaseadapterproperties:get_schema_name()</strong>
+    <a style="float:right;" href="../source/ExasolBaseAdapterProperties.lua.html#51">line 51</a>
+    </dt>
+    <dd>
+    Get the name of the Virtual Schema's source schema.
+
+    <h3>Covers Requirements:</h3>
+    <ul>
+         <li><code>dsn~schema-name-property~0</code> (impl)</li>
+    </ul>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        name of the source schema
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "exasolbaseadapterproperties:get_table_filter"></a>
+    <strong>exasolbaseadapterproperties:get_table_filter()</strong>
+    <a style="float:right;" href="../source/ExasolBaseAdapterProperties.lua.html#58">line 58</a>
+    </dt>
+    <dd>
+    Get the list of tables that the Virtual Schema should show after applying the table filter.
+
+    <h3>Covers Requirements:</h3>
+    <ul>
+         <li><code>dsn~table-filter-property~0</code> (impl)</li>
+    </ul>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        list of tables
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-07-14 07:02:43 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

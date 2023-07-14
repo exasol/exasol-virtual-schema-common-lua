@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Exasol Virtual Schema Common Lua</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Methods">Methods</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/LocalMetadataReader.html">LocalMetadataReader</a></li>
+  <li><strong>AbstractQueryRewriter</strong></li>
+  <li><a href="../classes/ExasolBaseAdapterProperties.html">ExasolBaseAdapterProperties</a></li>
+  <li><a href="../classes/LocalMetadataReader.html">LocalMetadataReader</a></li>
+  <li><a href="../classes/LocalQueryRewriter.html">LocalQueryRewriter</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>AbstractQueryRewriter</code></h1>
+<p>This class rewrites the query.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Methods">Methods</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#abstractqueryrewriter:new">abstractqueryrewriter:new()</a></td>
+	<td class="summary">Create a new instance of a <code>QueryRewriter</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#abstractqueryrewriter:class">abstractqueryrewriter:class()</a></td>
+	<td class="summary">Get a the class of the object.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#abstractqueryrewriter:_extend_query_with_source_schema">abstractqueryrewriter:_extend_query_with_source_schema(query, source_schema_id)</a></td>
+	<td class="summary">Add the source database schema to all query elements that represent a table.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#abstractqueryrewriter:_expand_select_list">abstractqueryrewriter:_expand_select_list(query)</a></td>
+	<td class="summary">Make sure the select list is never empty.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#abstractqueryrewriter:rewrite">abstractqueryrewriter:rewrite(_, _, _, _)</a></td>
+	<td class="summary">Rewrite the original query.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "abstractqueryrewriter:new"></a>
+    <strong>abstractqueryrewriter:new()</strong>
+    <a style="float:right;" href="../source/AbstractQueryRewriter.lua.html#11">line 11</a>
+    </dt>
+    <dd>
+    Create a new instance of a <code>QueryRewriter</code>.
+
+    </ul>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new instance
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "abstractqueryrewriter:class"></a>
+    <strong>abstractqueryrewriter:class()</strong>
+    <a style="float:right;" href="../source/AbstractQueryRewriter.lua.html#23">line 23</a>
+    </dt>
+    <dd>
+    Get a the class of the object.
+
+    </ul>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        class
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "abstractqueryrewriter:_extend_query_with_source_schema"></a>
+    <strong>abstractqueryrewriter:_extend_query_with_source_schema(query, source_schema_id)</strong>
+    <a style="float:right;" href="../source/AbstractQueryRewriter.lua.html#75">line 75</a>
+    </dt>
+    <dd>
+    Add the source database schema to all query elements that represent a table.
+ Table elements in the query structure are lacking the information which schema they belong too. But without this
+ information, the database cannot locate the table, because the table name is only valid in the context of the
+ containing schema. So this method adds the missing information by adding the source schema of the Virtual Schema
+ into the table elements.
+
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">query</span>
+
+
+
+        </li>
+        <li><span class="parameter">source_schema_id</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        query with table elements that contain the source schema
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "abstractqueryrewriter:_expand_select_list"></a>
+    <strong>abstractqueryrewriter:_expand_select_list(query)</strong>
+    <a style="float:right;" href="../source/AbstractQueryRewriter.lua.html#86">line 86</a>
+    </dt>
+    <dd>
+    Make sure the select list is never empty.
+ <ul>
+ <li>Expand the asterisk wildcard in the select list to a list of columns</li>
+ <li>Expand an empty select list to a constant expression</li>
+ </ul>
+
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">query</span>
+         query as provided by the VS interface
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        query with non-empty select list
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "abstractqueryrewriter:rewrite"></a>
+    <strong>abstractqueryrewriter:rewrite(_, _, _, _)</strong>
+    <a style="float:right;" href="../source/AbstractQueryRewriter.lua.html#100">line 100</a>
+    </dt>
+    <dd>
+    Rewrite the original query.
+
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">_</span>
+         list of tables that appear in the query
+        </li>
+        <li><span class="parameter">_</span>
+         list of tables that appear in the query
+        </li>
+        <li><span class="parameter">_</span>
+         list of tables that appear in the query
+        </li>
+        <li><span class="parameter">_</span>
+         list of tables that appear in the query
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string containing the rewritten query
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2023-07-14 07:02:43 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
