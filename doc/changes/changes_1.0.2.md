@@ -1,4 +1,4 @@
-# Exasol Virtual Schema Common (Lua) 1.0.2, released 2023-07-13
+# Exasol Virtual Schema Common (Lua) 1.0.2, released 2023-07-14
 
 Code name: Fix Issue With Integer Constants in `GROUP BY`
 
