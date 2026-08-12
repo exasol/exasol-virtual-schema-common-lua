@@ -23,7 +23,7 @@ jobs:
       - name: Install LuaRocks
         uses: leafo/gh-actions-luarocks@v6
         with:
-          luarocksVersion: "3.9.2"
+          luarocksVersion: "3.13.0"
 
       - name: Install Tools
         run: |
