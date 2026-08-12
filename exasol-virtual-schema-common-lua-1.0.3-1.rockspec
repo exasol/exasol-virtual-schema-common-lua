@@ -22,7 +22,7 @@ Common parts that are the same for all Virtual Schemas are in virtual-schema-com
 }
 
 dependencies = {
-    "virtual-schema-common-lua = 5.0.1",
+    "virtual-schema-common-lua = 5.0.0",
 }
 
 build_dependencies = {
