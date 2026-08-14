@@ -77,6 +77,15 @@ EVSCL reads the list of columns and their attributes from a table in the source 
 
 Needs: dsn
 
+#### Reading Timestamp Precision From Column Metadata
+`req~reading-timestamp-precision-from-column-metadata~1`
+
+When source column metadata declares a precision for a `TIMESTAMP` or `TIMESTAMP WITH LOCAL TIME ZONE`
+column, EVSCL reports that precision in the virtual schema metadata. For timestamps without an explicit
+precision, EVSCL preserves the existing metadata representation.
+
+Needs: dsn
+
 #### Include Tables
 `req~include-tables~1`
 
