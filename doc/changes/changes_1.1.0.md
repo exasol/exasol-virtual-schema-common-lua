@@ -1,10 +1,11 @@
 # Exasol Virtual Schema Common (Lua) 1.1.0, unreleased
 
+Code name: TIMESTAMP(9) Support
+
 ## Summary
 
-This release adds metadata-reader support for explicit Exasol timestamp precision.
+This release adds metadata-reader support for explicit Exasol timestamp precision. It also updates `virtual-schema-common-lua` to 5.1.0 to support rendering queries with timestamp precision (e.g., a `CAST (… AS TIMESTAMP(9))`).
 
 ## Features
 
-* Preserve the precision of `TIMESTAMP(p)` and `TIMESTAMP(p) WITH LOCAL TIME ZONE` columns in virtual-schema
-  metadata (#12).
+* #12: Added TIMESTAMP(9) support

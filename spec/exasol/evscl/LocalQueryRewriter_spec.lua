@@ -22,6 +22,31 @@ describe("Local query rewriter", function()
         assert_rewrite(original_query, "S", nil, 'SELECT "A_table"."C1", "A_table"."C2" FROM "S"."A_table"')
     end)
 
+    it("renders a timestamp with precision", function()
+        local original_query = {
+            type = "select",
+            selectList = {
+                {
+                    type = "function_scalar_cast",
+                    name = "CAST",
+                    arguments = {
+                        {
+                            columnNr = 4,
+                            name = "RECORDED",
+                            tableName = "EVENTS",
+                            type = "column"
+                        }
+                    },
+                    dataType = {
+                        type = "TIMESTAMP",
+                        precision = 9
+                    }
+                }
+            }
+        }
+        assert_rewrite(original_query, "S", nil, 'SELECT CAST("EVENTS"."RECORDED" AS TIMESTAMP(9))')
+    end)
+
     it("raises an error if the query to be rewritten is nil.", function()
         assert.error_matches(function() rewriter:rewrite(nil, nil, nil) end,
                 "Unable to rewrite query because it was <nil>.", 1, true)
