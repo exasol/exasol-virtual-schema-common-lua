@@ -1,0 +1,11 @@
+# See https://docs.zizmor.sh/configuration/#settings
+rules:
+  unpinned-uses:
+    config:
+      policies:
+        "actions/*": ref-pin
+        "*": hash-pin
+  cache-poisoning:
+    ignore:
+      # Enabling caching is OK for non-release workflows
+      - ci-build.yml
