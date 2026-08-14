@@ -7,7 +7,7 @@ set -o pipefail
 base_dir="$( cd "$(dirname "$0")/.." >/dev/null 2>&1 ; pwd -P )"
 readonly base_dir
 
-readonly language_server_version="3.10.5"
+readonly language_server_version="3.19.1"
 
 # Check if os is mac or linux
 if [[ "$OSTYPE" == "darwin"* ]]; then

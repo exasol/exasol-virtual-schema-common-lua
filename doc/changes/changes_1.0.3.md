@@ -1,4 +1,4 @@
-# Exasol Virtual Schema Common (Lua) 1.0.3, unreleased
+# Exasol Virtual Schema Common (Lua) 1.0.3, 2026-08-14
 
 Code name: Update LuaRocks Dependencies on top of 1.0.2
 
