@@ -12,7 +12,7 @@ readonly base_dir
 readonly diagrams_dir="$base_dir/doc/model/diagrams"
 readonly output_dir="$base_dir/doc/images/generated"
 
-if [[ "$(ls -A $output_dir)" ]]; then
+if [[ "$(ls -A "$output_dir")" ]]; then
   echo "Deleting diagrams from $output_dir..."
   rm "$output_dir"/*.svg
 fi
@@ -27,8 +27,8 @@ actual_diagram_count=$(find "$output_dir" -name "*.svg" | wc --lines)
 readonly actual_diagram_count
 
 if [[ "$expected_diagram_count" -ne "$actual_diagram_count" ]]; then
-    echo "ERROR: Expected $expected_diagram_count diagrams but $actual_diagram_count were generated"
+    echo "ERROR: Expected $expected_diagram_count diagrams but $actual_diagram_count where generated"
     exit 1
 fi
 
-echo "All $actual_diagram_count diagrams were built successfully in $output_dir."
+echo "All $actual_diagram_count diagrams where built successfully in $output_dir."
