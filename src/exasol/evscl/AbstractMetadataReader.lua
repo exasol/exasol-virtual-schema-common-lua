@@ -57,12 +57,15 @@ function AbstractMetadataReader:_translate_hash_type(column_id, column_type)
     return {name = column_id, dataType = {type = "HASHTYPE", bytesize = tonumber(size)}}
 end
 
-function AbstractMetadataReader:_translate_timestamp_type(column_id, local_time)
-    if local_time then
-        return {name = column_id, dataType = {type = "TIMESTAMP", withLocalTimeZone = true}}
-    else
-        return {name = column_id, dataType = {type = "TIMESTAMP"}}
-    end
+-- Timestamps come in different flavors. With or without precision. With local timezone or without.
+-- [impl -> dsn~reading-timestamp-precision-from-column-metadata~0]
+function AbstractMetadataReader:_translate_timestamp_type(column_id, column_type)
+    local hasLocalTimezone = string.find(column_type, "WITH LOCAL TIME ZONE", 1, true) and true
+    local precision = string.match(column_type, "TIMESTAMP%((%d+)%)")
+    return {name = column_id,
+            dataType = {type = "TIMESTAMP",
+                        withLocalTimeZone = hasLocalTimezone,
+                        precision = (precision and tonumber(precision))}}
 end
 
 function AbstractMetadataReader:_translate_geometry_type(column_id, column_type)
@@ -109,10 +112,8 @@ function AbstractMetadataReader:_translate_column_metadata(table_id, column)
         return self:_translate_char_type(column_id, column_type)
     elseif text.starts_with(column_type, "HASHTYPE") then
         return self:_translate_hash_type(column_id, column_type)
-    elseif string.find(column_type, "WITH LOCAL TIME ZONE", 1, true) then
-        return self:_translate_timestamp_type(column_id, true)
     elseif text.starts_with(column_type, "TIMESTAMP") then
-        return self:_translate_timestamp_type(column_id, false)
+        return self:_translate_timestamp_type(column_id, column_type)
     elseif text.starts_with(column_type, "GEOMETRY") then
         return self:_translate_geometry_type(column_id, column_type)
     elseif text.starts_with(column_type, "INTERVAL YEAR") then
