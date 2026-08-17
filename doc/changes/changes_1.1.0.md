@@ -1,4 +1,4 @@
-# Exasol Virtual Schema Common (Lua) 1.1.0, unreleased
+# Exasol Virtual Schema Common (Lua) 1.1.0, 206-08-17
 
 Code name: TIMESTAMP(9) Support
 
