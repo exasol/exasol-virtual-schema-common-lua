@@ -65,7 +65,7 @@ function AbstractMetadataReader:_translate_timestamp_type(column_id, column_type
     return {name = column_id,
             dataType = {type = "TIMESTAMP",
                         withLocalTimeZone = hasLocalTimezone,
-                        precision = (precision and tonumber(precision))}}
+                        fractionalSecondsPrecision = (precision and tonumber(precision))}}
 end
 
 function AbstractMetadataReader:_translate_geometry_type(column_id, column_type)

@@ -90,15 +90,15 @@ describe("Metadata reader", function()
             {"VARCHAR(2000000) ASCII", {type = "VARCHAR", characterSet = "ASCII", size = 2000000}},
             {"HASHTYPE(5 BYTE)", {type = "HASHTYPE", bytesize = 5}},
             {"TIMESTAMP", {type = "TIMESTAMP"}},
-            {"TIMESTAMP(0)", {type = "TIMESTAMP", precision = 0}},
-            {"TIMESTAMP(9)", {type = "TIMESTAMP", precision = 9}},
+            {"TIMESTAMP(0)", {type = "TIMESTAMP", fractionalSecondsPrecision = 0}},
+            {"TIMESTAMP(9)", {type = "TIMESTAMP", fractionalSecondsPrecision = 9}},
             {"GEOMETRY(4)", {type = "GEOMETRY", srid = 4}},
             {"INTERVAL YEAR(6) TO MONTH", {type = "INTERVAL", fromTo = "YEAR TO MONTH", precision = 6}},
             {"INTERVAL DAY(9) TO SECOND(5)", {type = "INTERVAL", fromTo = "DAY TO SECONDS",
                                               precision = 9, fraction = 5}},
             {"TIMESTAMP WITH LOCAL TIME ZONE", {type = "TIMESTAMP", withLocalTimeZone = true}},
-            {"TIMESTAMP(0) WITH LOCAL TIME ZONE", {type = "TIMESTAMP", precision = 0, withLocalTimeZone = true}},
-            {"TIMESTAMP(9) WITH LOCAL TIME ZONE", {type = "TIMESTAMP", precision = 9, withLocalTimeZone = true}},
+            {"TIMESTAMP(0) WITH LOCAL TIME ZONE", {type = "TIMESTAMP", fractionalSecondsPrecision = 0, withLocalTimeZone = true}},
+            {"TIMESTAMP(9) WITH LOCAL TIME ZONE", {type = "TIMESTAMP", fractionalSecondsPrecision = 9, withLocalTimeZone = true}},
             {"GEOMETRY", {type = "GEOMETRY", srid = 0}}
         }
         for _, parameter in ipairs(parameters) do
