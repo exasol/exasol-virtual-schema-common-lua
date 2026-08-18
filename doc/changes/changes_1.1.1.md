@@ -10,4 +10,4 @@ This issue was detected in a dependent virtual schema's integration test.
 
 ## Features
 
-* #12: Added TIMESTAMP(9) support
+* #15: Fixed timestamp precision API usage
