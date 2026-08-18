@@ -97,8 +97,10 @@ describe("Metadata reader", function()
             {"INTERVAL DAY(9) TO SECOND(5)", {type = "INTERVAL", fromTo = "DAY TO SECONDS",
                                               precision = 9, fraction = 5}},
             {"TIMESTAMP WITH LOCAL TIME ZONE", {type = "TIMESTAMP", withLocalTimeZone = true}},
-            {"TIMESTAMP(0) WITH LOCAL TIME ZONE", {type = "TIMESTAMP", fractionalSecondsPrecision = 0, withLocalTimeZone = true}},
-            {"TIMESTAMP(9) WITH LOCAL TIME ZONE", {type = "TIMESTAMP", fractionalSecondsPrecision = 9, withLocalTimeZone = true}},
+            { "TIMESTAMP(0) WITH LOCAL TIME ZONE", {type = "TIMESTAMP", fractionalSecondsPrecision = 0,
+                                                    withLocalTimeZone = true}},
+            { "TIMESTAMP(9) WITH LOCAL TIME ZONE", {type = "TIMESTAMP", fractionalSecondsPrecision = 9,
+                                                    withLocalTimeZone = true}},
             {"GEOMETRY", {type = "GEOMETRY", srid = 0}}
         }
         for _, parameter in ipairs(parameters) do
