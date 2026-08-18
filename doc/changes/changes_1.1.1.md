@@ -1,4 +1,4 @@
-# Exasol Virtual Schema Common (Lua) 1.1.1, 206-08-18
+# Exasol Virtual Schema Common (Lua) 1.1.1, 2026-08-18
 
 Code name: TIMESTAMP fractionalSecondsPrecision
 
