@@ -1,3 +1,13 @@
+> [!IMPORTANT]
+> The content of this repository has been integrated with the mono-repo for Lua-based Virtual Schemas.
+>
+> https://github.com/exasol/exasol-virtual-schema-lua
+>
+> Please refer to this repository for newer versions of this base library.
+
+> [!WARNING]
+> This repository is archived and does not receive updates anymore.
+
 # Exasol Virtual Schema Common Lua
 
 This is a common library of the Lua-based Exasol Virtual Schema and Row-Level-Security.
